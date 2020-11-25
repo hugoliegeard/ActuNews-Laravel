@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DefaultController;
+use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,3 +35,6 @@ Route::get('/{category}/{alias}_{id}.html', [DefaultController::class, 'post'])-
 
 // exemple : http://localhost:8000/page/contact
 Route::get('/page/contact', [ContactController::class, 'contact'])->name('contact.contact');
+
+// exemple : http://localhost:8000/page/test/insertion
+Route::get('/page/test/insertion', [PostController::class, 'testInsertion']);
