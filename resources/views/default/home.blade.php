@@ -3,6 +3,9 @@
 @section('title', 'Accueil')
 
 @section('content')
+
+    {{--@dump($posts)--}}
+
     {{--.p-3.mx-auto.text-center>h1.display-4{ActuNews}--}}
     <div class="p-3 mx-auto text-center">
         <h1 class="display-4">ActuNews</h1>
@@ -12,39 +15,22 @@
     <div class="py-5 bg-light">
         <div class="container">
             <div class="row">
-                <div class="col-md-4 mt-4">
-                    <div class="card shadow-sm">
-                        <img src="https://via.placeholder.com/500" class="card-img-top" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">Some quick example text to build on the card title and make up the bulk
-                                of the card's content.</p>
-                            <a href="#" class="btn btn-primary">Go somewhere</a>
+                @foreach($posts as $post)
+                    <div class="col-md-4 mt-4">
+                        <div class="card shadow-sm">
+                            <img src="{{ $post->featuredImage }}" class="card-img-top" alt="{{ $post->title }}">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ $post->title }}</h5>
+                                <p class="card-text">{{ $post->content }}</p>
+                                <a href="{{ route('default.post', [
+                                    'category' => $post->category->alias,
+                                    'alias' => $post->alias,
+                                    'id' => $post->id
+                                ]) }}" class="btn btn-primary">Voir l'Article</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-4 mt-4">
-                    <div class="card shadow-sm">
-                        <img src="https://via.placeholder.com/500" class="card-img-top" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">Some quick example text to build on the card title and make up the bulk
-                                of the card's content.</p>
-                            <a href="#" class="btn btn-primary">Go somewhere</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 mt-4">
-                    <div class="card shadow-sm">
-                        <img src="https://via.placeholder.com/500" class="card-img-top" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">Some quick example text to build on the card title and make up the bulk
-                                of the card's content.</p>
-                            <a href="#" class="btn btn-primary">Go somewhere</a>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </div>
     </div>

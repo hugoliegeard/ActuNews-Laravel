@@ -38,3 +38,7 @@ Route::get('/page/contact', [ContactController::class, 'contact'])->name('contac
 
 // exemple : http://localhost:8000/page/test/insertion
 Route::get('/page/test/insertion', [PostController::class, 'testInsertion']);
+
+// exemple : http://localhost:8000/admin/creer-un-article
+Route::get('/admin/creer-un-article', [PostController::class, 'create'])->name('post.create');
+Route::post('/admin/creer-un-article', [PostController::class, 'store'])->name('post.store');

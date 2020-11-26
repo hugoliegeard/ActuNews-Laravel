@@ -4,6 +4,9 @@
 namespace App\Http\Controllers;
 
 
+use App\Models\Category;
+use App\Models\Post;
+
 class DefaultController extends Controller
 {
 
@@ -13,7 +16,13 @@ class DefaultController extends Controller
      */
     public function home()
     {
-        return view('default.home');
+        # Récupérer les données de la page d'accueil
+        $posts = Post::all();
+
+        # Transmettre ces données à la vue pour affichage à l'utilisateur
+        return view('default.home', [
+            'posts' => $posts
+        ]);
     }
 
     /**
@@ -21,15 +30,25 @@ class DefaultController extends Controller
      */
     public function category($alias)
     {
-        return view('default.category');
+        # Récupérer dans la BDD les articles de la catégorie
+        $category = Category::where('alias', $alias)->first();
+        # dd($category);
+
+        # Transmettre ces données à la vue pour affichage à l'utilisateur
+        return view('default.category', [
+            'category' => $category
+        ]);
     }
 
     /**
      * Permet d'afficher un article
      */
-    public function post($id, $alias, $category)
+    public function post($category, $alias, $id)
     {
-        return view('default.post');
+        # Récupération et Affichage de l'article depuis la BDD
+        return view('default.post', [
+            'post' => Post::find($id)
+        ]);
     }
 
 }
