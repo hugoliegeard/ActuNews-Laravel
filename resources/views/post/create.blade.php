@@ -39,7 +39,18 @@
         <div class="container">
             <div class="row">
                 <div class="col">
-                    <form action="" enctype="multipart/form-data" method="POST">
+
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    <form enctype="multipart/form-data" method="POST">
                         @csrf
                         {{-- Titre --}}
                         <div class="form-group">
@@ -47,16 +58,21 @@
                             <input type="text"
                                    name="title"
                                    placeholder="Titre."
-                                   class="form-control">
+                                   class="form-control @error('title') is-invalid @enderror">
                             <small class="form-text text-muted">
                                 Saisissez le titre de votre article
                             </small>
+                            @error('title')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                         </div>
 
                         {{-- Categorie --}}
                         <div class="form-group">
                             <label>Catégorie</label>
-                            <select name="category" class="form-control">
+                            <select name="category" class="form-control @error('category') is-invalid @enderror">
                                 @foreach(\App\Models\Category::all() as $category)
                                     <option value="{{ $category->id }}">{{ $category->name  }}</option>
                                 @endforeach
@@ -64,6 +80,11 @@
                             <small class="form-text text-muted">
                                 Choisissez la catégorie de votre article
                             </small>
+                            @error('category')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                         </div>
 
                         {{-- Contenu --}}
@@ -71,19 +92,29 @@
                             <label>Contenu</label>
                             <textarea id="editor" name="content"
                                       placeholder="Contenu."
-                                      class="form-control"></textarea>
+                                      class="form-control @error('content') is-invalid @enderror"></textarea>
                             <small class="form-text text-muted">
                                 Saisissez le contenu de votre article
                             </small>
+                            @error('content')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                         </div>
 
                         {{-- Illustration --}}
                         <div class="form-group">
                             <label>Illustration</label>
-                            <input name="featuredImage" class="form-control dropify" type="file">
+                            <input name="featuredImage" class="form-control dropify @error('featuredImage') is-invalid @enderror" type="file">
                             <small class="form-text text-muted">
                                 Choisissez l'illustration de votre article
                             </small>
+                            @error('featuredImage')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                         </div>
 
                         <button class="btn btn-block btn-dark">Publier mon Article</button>

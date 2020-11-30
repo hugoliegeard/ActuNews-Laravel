@@ -42,3 +42,13 @@ Route::get('/page/test/insertion', [PostController::class, 'testInsertion']);
 // exemple : http://localhost:8000/admin/creer-un-article
 Route::get('/admin/creer-un-article', [PostController::class, 'create'])->name('post.create');
 Route::post('/admin/creer-un-article', [PostController::class, 'store'])->name('post.store');
+
+// On réécrit l'URL d'inscription par défaut fourni avec Jetstream
+Route::middleware(['guest'])->get('/abonne/inscription', function() {
+    return view('auth.register');
+})->name('subscriber.register');
+
+// L'URL permettant à un utilisateur connecté d'accéder au panneau d'administration
+Route::middleware(['auth:sanctum', 'verified'])->get('/admin/dashboard', function () {
+    return view('dashboard');
+})->name('dashboard');

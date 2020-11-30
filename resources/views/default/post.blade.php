@@ -13,10 +13,15 @@
         <div class="container">
             <div class="row">
                 <div class="col-12 mt-4">
+                    @if(session('success'))
+                        <div class="alert alert-success">
+                            {!! session('success') !!}
+                        </div>
+                    @endif
                     <div class="jumbotron">
                         <div class="row">
                             <div class="col-6">
-                                <img class="img-fluid" src="{{ $post->featuredImage }}"
+                                <img class="img-fluid" src="{{ asset("storage/posts/$post->featuredImage") }}"
                                      alt="{{ $post->title }}">
                             </div>
                             <div class="col-6">
