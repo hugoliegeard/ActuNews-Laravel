@@ -25,6 +25,11 @@
             <div class="row">
                 <div class="col">
                     <div class="card p-2 shadow-sm">
+                        @if(session('success'))
+                            <div class="alert alert-success">
+                                {!! session('success') !!}
+                            </div>
+                        @endif
                         <table id="postTable" class="table">
                             <thead>
                             <tr>
