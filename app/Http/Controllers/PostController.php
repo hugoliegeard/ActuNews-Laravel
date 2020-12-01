@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PostEvent;
 use App\Http\Requests\PostRequest;
 use App\Models\Category;
 use App\Models\Post;
@@ -9,6 +10,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class PostController extends Controller
@@ -97,8 +99,10 @@ class PostController extends Controller
         $post->user()->associate(Auth::user());
         $post->save();
 
-        # Redirection vers l'article ------------------------------------->
+        # Emission d'un évènement : PostEvent ---------------------------->
+        PostEvent::dispatch($post);
 
+        # Redirection vers l'article ------------------------------------->
         return redirect()->action([DefaultController::class, 'post'], [
             'category' => $category->alias,
             'alias' => $post->alias,
@@ -169,5 +173,26 @@ class PostController extends Controller
             'id' => $post->id
         ])->with('success', 'Votre article a été mis à jour !');
 
+    }
+
+    /**
+     * Permet la suppression d'un article
+     * @param $id
+     * @return   RedirectResponse
+     */
+    public function delete($id)
+    {
+        // Récupération de l'article
+        $post = Post::find($id);
+
+        // cf : https://laravel.com/docs/8.x/filesystem#deleting-files
+        Storage::delete('public/posts/' . $post->featuredImage);
+
+        // Suppression de l'article dans la BDD
+        $post->delete();
+
+        // Redirection avec confirmation
+        return redirect()->action([AdminController::class, 'postsManagement'])
+            ->with('success', 'Votre article a été supprimé !');
     }
 }

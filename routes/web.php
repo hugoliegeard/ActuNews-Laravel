@@ -52,6 +52,9 @@ Route::middleware(['auth'])->group(function () {
     // Editer un article
     Route::get('/admin/article/{id}', [PostController::class, 'update'])->name('post.update');
     Route::patch('/admin/article/{id}', [PostController::class, 'storeUpdate'])->name('post.store.update');
+
+    // Supprimer un article
+        Route::get('/admin/article/{id}/delete', [PostController::class, 'delete'])->name('post.delete');
 });
 
 // On réécrit l'URL d'inscription par défaut fourni avec Jetstream
