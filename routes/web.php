@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DefaultController;
 use App\Http\Controllers\PostController;
@@ -39,16 +40,26 @@ Route::get('/page/contact', [ContactController::class, 'contact'])->name('contac
 // exemple : http://localhost:8000/page/test/insertion
 Route::get('/page/test/insertion', [PostController::class, 'testInsertion']);
 
-// exemple : http://localhost:8000/admin/creer-un-article
-Route::get('/admin/creer-un-article', [PostController::class, 'create'])->name('post.create');
-Route::post('/admin/creer-un-article', [PostController::class, 'store'])->name('post.store');
+// Ici toutes nos routes font appel au middleware d'authentification
+// cf: https://laravel.com/docs/8.x/routing#route-group-middleware
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/dashboard', [AdminController::class, 'postsManagement'])->name('admin.posts');
+
+    // Créer un article
+    Route::get('/admin/article', [PostController::class, 'create'])->name('post.create');
+    Route::post('/admin/article', [PostController::class, 'store'])->name('post.store');
+
+    // Editer un article
+    Route::get('/admin/article/{id}', [PostController::class, 'update'])->name('post.update');
+    Route::patch('/admin/article/{id}', [PostController::class, 'storeUpdate'])->name('post.store.update');
+});
 
 // On réécrit l'URL d'inscription par défaut fourni avec Jetstream
-Route::middleware(['guest'])->get('/abonne/inscription', function() {
+Route::middleware(['guest'])->get('/abonne/inscription', function () {
     return view('auth.register');
 })->name('subscriber.register');
 
 // L'URL permettant à un utilisateur connecté d'accéder au panneau d'administration
-Route::middleware(['auth:sanctum', 'verified'])->get('/admin/dashboard', function () {
+Route::middleware(['auth:sanctum', 'verified'])->get('/admin/jetstream/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');

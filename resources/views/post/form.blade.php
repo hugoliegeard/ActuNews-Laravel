@@ -50,13 +50,17 @@
                         </div>
                     @endif
 
-                    <form enctype="multipart/form-data" method="POST">
+                    <form action="{{ $post->id == null ? '/admin/article' : '/admin/article/' . $post->id }}" enctype="multipart/form-data" method="POST">
+                        @isset($post->id)
+                            {{ method_field('PATCH') }}
+                        @endisset
                         @csrf
                         {{-- Titre --}}
                         <div class="form-group">
                             <label>Titre</label>
                             <input type="text"
                                    name="title"
+                                   value="{{ old('title', $post->title) }}"
                                    placeholder="Titre."
                                    class="form-control @error('title') is-invalid @enderror">
                             <small class="form-text text-muted">
@@ -74,7 +78,7 @@
                             <label>Catégorie</label>
                             <select name="category" class="form-control @error('category') is-invalid @enderror">
                                 @foreach(\App\Models\Category::all() as $category)
-                                    <option value="{{ $category->id }}">{{ $category->name  }}</option>
+                                    <option @if(isset($post->category->id) && $post->category->id === $category->id) selected @endif value="{{ $category->id }}">{{ $category->name  }}</option>
                                 @endforeach
                             </select>
                             <small class="form-text text-muted">
@@ -92,7 +96,7 @@
                             <label>Contenu</label>
                             <textarea id="editor" name="content"
                                       placeholder="Contenu."
-                                      class="form-control @error('content') is-invalid @enderror"></textarea>
+                                      class="form-control @error('content') is-invalid @enderror">{{ old('content', $post->content) }}</textarea>
                             <small class="form-text text-muted">
                                 Saisissez le contenu de votre article
                             </small>
@@ -103,10 +107,10 @@
                             @enderror
                         </div>
 
-                        {{-- Illustration --}}
+                        {{-- Illustration | Dropify : https://github.com/JeremyFagis/dropify --}}
                         <div class="form-group">
                             <label>Illustration</label>
-                            <input name="featuredImage" class="form-control dropify @error('featuredImage') is-invalid @enderror" type="file">
+                            <input data-default-file="{{ asset("storage/posts/$post->featuredImage") }}" name="featuredImage" class="form-control dropify @error('featuredImage') is-invalid @enderror" type="file">
                             <small class="form-text text-muted">
                                 Choisissez l'illustration de votre article
                             </small>

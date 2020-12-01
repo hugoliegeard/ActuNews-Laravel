@@ -8,6 +8,7 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class PostController extends Controller
@@ -50,7 +51,9 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view('post.create');
+        return view('post.form', [
+            'post' => new Post()
+        ]);
     }
 
     /**
@@ -76,11 +79,11 @@ class PostController extends Controller
 
         # Renommer le fichier avec un nouveau nom
         # On renomme l'image en nous basant sur l'alias, sans oublier l'extension à la fin.
-        $newFilename = $alias .'.'.$extension;
+        $newFilename = $alias . '.' . $extension;
 
         # On stock notre image dans le dossier "public/posts"
         $featuredImage->storeAs(
-                'public/posts', $newFilename
+            'public/posts', $newFilename
         );
 
         # Création d'un Post ------------------------------------->
@@ -91,7 +94,7 @@ class PostController extends Controller
         $post->content = $request->input('content');
         $post->featuredImage = $newFilename;
         $post->category()->associate($category);
-        $post->user()->associate(User::find(1)); # TODO Remplacer par l'utilisateur connecté.
+        $post->user()->associate(Auth::user());
         $post->save();
 
         # Redirection vers l'article ------------------------------------->
@@ -101,6 +104,70 @@ class PostController extends Controller
             'alias' => $post->alias,
             'id' => $post->id
         ])->with('success', 'Votre article est maintenant en ligne !');
+
+    }
+
+    /**
+     * Affiche le formulaire de création d'un article
+     */
+    public function update($id)
+    {
+        return view('post.form', [
+            'post' => Post::find($id)
+        ]);
+    }
+
+    /**
+     * Traitement des données soumises dans le formulaire ci-dessus
+     * @param $id
+     * @param PostRequest $request
+     * @return RedirectResponse
+     */
+    public function storeUpdate($id, PostRequest $request)
+    {
+        # Récupération du Post
+        $post = Post::find($id);
+
+        # Récupération de la catégorie
+        $category = Category::find($request->input('category'));
+
+        # Upload de l'image ------------------------------------->
+
+        # Récupération depuis la request de notre image
+        $newFilename = $post->featuredImage;
+        $featuredImage = $request->file('featuredImage');
+        if (null !== $featuredImage) {
+            # On récupère l'extension de l'image (jpg, png, etc...)
+            $extension = $featuredImage->extension();
+
+            # Renommer le fichier avec un nouveau nom
+            # On renomme l'image en nous basant sur l'alias, sans oublier l'extension à la fin.
+            $newFilename = $post->alias . '.' . $extension;
+
+            # On stock notre image dans le dossier "public/posts"
+            $featuredImage->storeAs(
+                'public/posts', $newFilename
+            );
+
+            # TODO : Supprimer l'ancienne image sur le serveur
+        }
+
+        # Mise à jour d'un Post ------------------------------------->
+        # Dans de la mise à jour d'un post, on ne modifie pas l'alias pour le SEO.
+
+        $post->title = $request->input('title');
+        $post->content = $request->input('content');
+        $post->featuredImage = $newFilename;
+        $post->category()->associate($category);
+        $post->save();
+
+        # Redirection vers l'article ------------------------------------->
+
+        return redirect()->action([DefaultController::class, 'post'], [
+            'category' => $category->alias,
+            'alias' => $post->alias,
+            'id' => $post->id
+        ])->with('success', 'Votre article a été mis à jour !');
 
     }
 }
