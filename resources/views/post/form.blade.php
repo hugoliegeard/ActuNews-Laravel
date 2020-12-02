@@ -110,7 +110,7 @@
                         {{-- Illustration | Dropify : https://github.com/JeremyFagis/dropify --}}
                         <div class="form-group">
                             <label>Illustration</label>
-                            <input data-default-file="{{ asset("storage/posts/$post->featuredImage") }}" name="featuredImage" class="form-control dropify @error('featuredImage') is-invalid @enderror" type="file">
+                            <input @isset($post->id) data-default-file="{{ asset("storage/posts/$post->featuredImage") }}" @endisset name="featuredImage" class="form-control dropify @error('featuredImage') is-invalid @enderror" type="file">
                             <small class="form-text text-muted">
                                 Choisissez l'illustration de votre article
                             </small>
